@@ -1,0 +1,51 @@
+<center>
+    <div class="container" id="edit_user_email">
+<h1>Change Email</h1>
+    <br>
+
+<p  class="text-<%= status_message(notice) %>" id="notice"><%= notice %></p>
+        <%= form_for(:user, :url => {:controller => 'users', :action => 'email_change'}, html: { autocomplete: "off" }) do |form| %>
+  <center>
+
+</center>
+      <!-- Username -->
+       <div class="item">
+  
+    <% if @user.settings.email_comfirmed %>
+    <div class="control-group">
+      <!-- Password-->
+        <%= form.label :old_email, "Old Email *" %>
+        <%= form.text_field :old_email, id: "email_update", class: "form-control", placeholder: "Old Email" %>    
+    </div>
+    <br>
+    <% else %>
+        <div class="control-group">
+      <!-- Password-->
+        <%= form.label :old_email, "Old Email *" %>
+        <%= form.text_field :old_email, id: "email_update", class: "form-control", value: @user.email %>     
+    </div>
+        <br>
+
+    <% end %>
+ 
+    <div class="control-group">
+      <!-- Password-->
+        <%= form.label :new_email, "New Email *" %>
+        <%= form.text_field :new_email, id: "new_email", class: "form-control", placeholder: "New Email" %>    
+    </div>
+        <br>
+
+ 
+    <div class="control-group">
+      <!-- Password -->
+        <%= form.label :email_confirmation, "New Email confirmation *" %>
+        <%= form.text_field :email_confirmation, class: "form-control", id: "new_email_conf", placeholder: "Email confirmation" %>
+      <br>
+    </div>
+        <%= form.submit "Update" %>
+    </div>
+
+</center>
+<%= javascript_pack_tag 'email_match_check_and_mobile_number' %>
+
+  <% end %>

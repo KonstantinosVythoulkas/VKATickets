@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  username: MyString
+  department: MyString
+  subusername: MyString
+  subdepartment: MyString
+  status: MyString
+  substatus: MyString
+  ticket: one
+
+two:
+  username: MyString
+  department: MyString
+  subusername: MyString
+  subdepartment: MyString
+  status: MyString
+  substatus: MyString
+  ticket: two

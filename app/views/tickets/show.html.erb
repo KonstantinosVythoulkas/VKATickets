@@ -1,0 +1,389 @@
+
+<div id="ticket_show_panel">
+  <h1 class="card-header d-flex justify-content-between align-items-center" id="options_bar">
+    <div class="dropdowns">
+  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><%= @ticket.ticketDepartment %>
+  <span class="caret"></span></button>
+  <%= form_with(model: @ticket) do |f| %>
+  <ul class="dropdown-menu">
+    <%= reassing_list %>
+  </ul>
+</div>
+<% if @ticket.status %>
+    <%= f.submit "Close Ticket", class: "btn btn-sm btn-danger", id: "Close_ticket" %>
+  <% else %>
+      <%= f.submit "Reopen Ticket", class: "btn btn-sm btn-success", id: "Open_ticket" %>
+      <% end %>
+    <button type="button" class="btn btn-sm btn-primary"><%= link_to 'Edit', edit_ticket_path(@ticket), id: "edit_ticket_link" %> </button>
+  </h1>
+  <%= f.text_field :ticketDepartment, id: 'assing_new_value', :style => "display: none;"%>
+  <%= f.text_field :reason, :style => "display: none;", id: "reason" %>
+  <%= f.submit "Reassing", id: 'reassing_action', :style => "display: none;" %>
+
+<% end %>
+
+
+<div class="card text-center text-white" id="card-hg">
+
+  <div class="card-header" id="card_title">
+       <h4><%= @ticket.title %></h4>
+  </div>
+  <div class="card-body" id="card_body">
+    <h5 class="card-title"></h5>
+    <p class="card-text">  <%= @ticket.content %></p>
+  </div>
+</div>
+<br>
+
+<% i = 0%>
+<h4>Comments</h4>
+<% if @ticket.comment.content != nil %>
+<div class="alert alert-secondary" role="alert" id="comments">
+<% while i < @ticket.comment.content.length  %>
+  <strong><%= @ticket.comment.username[i]%>: </strong><%= @ticket.comment.content[i]%>
+  <span><em><%= @ticket.comment.sendtime[i].strftime("%H:%M:%S") if @ticket.comment.sendtime[i] !=  nil%></em></span>
+  <hr class="comments-hr">
+  <% i +=1 %>
+    <% end  %>
+</div>
+   <% end  %>
+       <%= form_for(:comment, :url => {:controller => 'comments', :action => 'reply'}) do |f| %>
+<div class="input-group mb-3" id="new_comment">
+        <%= f.text_field :comment, class: "form-control", placeholder: "Write a Comment", id: "comment_field" if @ticket.status%>
+        <%= f.number_field :id, value: @ticket.id, style: "display:none;" %>
+  <div class="input-group-append">  
+      <%= submit_comment_button if @ticket.status %>
+<% end %>  </div>
+</div>
+  </div>
+      <% flash.each do |type, msg| %>
+          <div class="messages_erros">
+          <script>
+          msg = '<%= msg %>'
+          </script>
+            <%= javascript_tag "alert(msg)" %>
+          </div>
+          <% end %>
+<figure>
+<br>
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+      Watching(<%= @ticket.watchers.length%>) <i class="bi bi-eye-fill"></i>
+</button>
+  <br>
+        <br>
+<% if @user.group != "User" &&  @ticket.progress.username == nil%>
+  <%= form_for(:ticket, :url => {:controller => 'tickets', :action => 'imWorkingOnIt'}) do |f| %>
+      <br>
+
+       <%= f.button 'I Will Fix It', value: @ticket.id, class: "btn btn-warning", name: 'ticket_id'%> <i class="bi bi-gear"></i>
+       <% end %>
+      <% else %>
+<button type="button" class="btn btn-warning" disabled >
+      <%= @ticket.statusinfo%> <i class="bi bi-gear-fill"></i>
+</button>
+<br>
+      <%end%>
+      <br>
+      <%if @user.group != "User"%>
+      <%= form_for(:ticket, :url => {:controller => 'tickets', :action => 'solved'}) do |f| %>
+        <%= f.button "Solved", disable_with: 'saveing...', value: @ticket.id, class: "btn btn-success",name: 'ticket_id' %>
+        <%end%>
+        <%end%>
+  <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content bg-secondary text-white">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Watching Users</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <% @ticket.watchers.each do |username| %>
+        <% if username == @ticket.user %>
+        <h5><%= username + " (author)"%></h5>
+        <% else %>
+        <h5><%= username %></h5>
+        <% end %>
+        <% end %>
+      </div>
+      <div class="modal-footer">
+       <%# create_watch_unwatch_form(@ticket.watchers)%>
+            <% if @ticket.watchers.include?(@user.username)%>
+             <%= form_for(:ticket, :url => {:controller => 'tickets', :action => 'unwatch'}) do |f| %>
+        <%= f.button 'Stop Watching', value: @ticket.id, class: 'btn btn-danger', type: 'submit', name: 'id' %>
+        <% end %>
+        <%else%>
+        <%= form_for(:ticket, :url => {:controller => 'tickets', :action => 'watch'}) do |f| %>
+        <%= f.button 'Watch', value: @ticket.id, class: 'btn btn-success', type: 'submit', name: 'id' %>
+        <% end %>
+        <%end%>
+      </div>
+    </div>
+  </div>
+</div>
+ <!-- End Modal -->
+
+<!-- Larg modal, progress info-->
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg bg-dark">
+    <div class="modal-content bg-dark text-white">
+      <h3><center>Great news <%= @ticket.progress.username%> from <%= @ticket.progress.department%> Working on it!</center></h3>
+<div class="row">
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Progress</h5>
+        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+      </div>
+    </div>
+  </div>
+ <% if @user.group != "User" %>
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-body">
+      
+        <h5 class="card-title">Ticket Status</h5>
+       
+
+        
+      </div>
+    </div>
+  </div>
+  <%end%>
+</div>
+      <br>
+    </div>
+  </div>
+</div>
+
+<!-- End large Modal!-->
+<br>
+<div class="card text-dark bg-dark mb-3" style="max-width: 25rem;" id="tasks_card"> 
+  <!-- <div class="card-header" id="tasks_card">Sub Tasks   <span id="fullScreen"><%= tasks_full_page_button %></span></div> -->
+  <div class="card-header" id="tasks_card">Sub Tasks   <span id="fullScreen"><%= link_to '<i class="bi bi-arrows-fullscreen"></i>'.html_safe, tickets_tickets_tasks_path(:id => @ticket.id), id: "sub_task_page_button" %></span></div>
+  
+
+
+
+  <div class="card-body">
+  <div style="overflow: hidden;">
+   <% unless !@ticket.status%>
+    <p class="card-text" style="float: left;"><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".addTask">Add sub task</button> &nbsp;
+</p>
+<% end %>
+
+<% unless @ticket.progress.subusername.length == 0 %>
+<p style="float: right;"> <strong><h4>Progress <%= sub_task_progress_bar(@ticket.progress.status)%>%</h4></strong></p>
+<% end %>
+<br>
+</div>
+<div class="scroll_table">
+    <table class="table table-bordered table-dark ">
+  <thead>
+    <tr>
+      <th scope="col">Department</th>
+      <th scope="col">User</th>
+      <th scope="col">Info</th>
+      <th scope="col">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% i = 0
+   while i < @ticket.progress.subusername.length %>
+    <tr>
+      <th scope="row"><%= @ticket.progress.subdepartment[i] %></th>
+      <td><%= @ticket.progress.subusername[i] %></td>
+      <td><%= @ticket.progress.info[i] %></td>
+      <td><%= @ticket.progress.statusDesc[i] %></td>
+    </tr>
+    <% i += 1%>
+    <% end %>
+  </tbody>
+</table>
+</div>
+  </div>
+</div>
+  <div class="card text-white bg-secondary mb-3" id="images-list" style="max-width: 25rem;">
+  <div class="card-header">
+    Uploaded Images
+  </div>
+  <div class="card-body">
+
+  <% unless @ticket.images.blank?
+    i = 1 
+     @ticket.images.each do |image| %>
+<%= link_to image_tag('images_logo.png', :size => "50x40"), url_for(image), target: :_blank%>
+<figcaption><%="#{i}#"%><strong class="extension"><%= File.extname(image.blob.filename.to_s)%></strong></figcaption>
+<% i+= 1%>
+<% end %>
+<% else %>
+<h4>No images uploaded</h4>
+<% end %>
+  </div>
+  <%= form_with(model: @ticket) do |form| %>
+  <div class="card-footer text-white">
+      <%= form.file_field :images, :multiple => true, id: "upfile", :onchange => "sub(this)" if @ticket.status%>
+  </div>
+  <% end %>
+</div>
+</div>
+<!-- Add task modal -->
+<div class="modal fade addTask" tabindex="-1" role="dialog" aria-labelledby="addTask" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content  bg-secondary">
+      <div class="container">
+  <h2>Choose department</h2>
+        <%= form_for(:progress, :url => {:controller => 'progresss', :action => 'add_subtasks'}) do |f| %>
+    <label class="radio-inline">
+        <div class="field">
+    <%= f.label "Choose department" %><br />
+    <%= f.label :subdepartment, "Admin", :value => "Admin"  %>
+    <%= f.radio_button :subdepartment, "Admin", :checked => true %>
+    <%= f.label :subdepartment, "IT", :value => "IT" %>
+    <%= f.radio_button :subdepartment, "IT", :checked => false %>
+    <%= f.label :subdepartment, "DB", :value => "DB" %>
+    <%= f.radio_button :subdepartment, "DB", :checked => false %>
+  </div>
+    <h4>Issue Info</h4>
+    <%= f.text_field :info, type: "text" %>
+    <%= f.number_field :ticket_id, value: @ticket.id, style: "display:none;" %>
+    <br>
+    <div class="form-check">
+    <br>
+  <%= f.check_box :emergency, value: true %>
+
+  <label class="form-check-label" for="flexCheckDefault">
+    Emergency
+  </label>
+  <br>
+  <br>
+  <center><%= f.submit "Commit", class: "btn btn-primary"%></center>
+  <br>
+</div>
+  <% end %>
+
+</div>
+  </div>
+  </div>
+
+</div>
+
+
+
+<!-- Sub Tasks full screen-->
+
+<div class="modal fade fullScreenTasks" tabindex="-1" role="dialog" aria-labelledby="fullScreenTasks" aria-hidden="true" id="SubTasksFullScreen"  id="myModal">
+  <div class="modal-dialog" id="FullScreenModalDialog">
+    <div class="modal-content" id="FullScreenModalContent">
+      <div class="scroll_table_fullscreen">
+    <table class="table table-bordered table-dark ">
+  <thead>
+    <tr>
+      <th scope="col">Department</th>
+      <th scope="col">User</th>
+      <th scope="col">Info</th>
+      <th scope="col">Status</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% i = 0
+   while i < @ticket.progress.subusername.length %>
+    <tr>
+      <th scope="row"><%= @ticket.progress.subdepartment[i] %></th>
+      <td><%= @ticket.progress.subusername[i] %></td>
+      <td><%= @ticket.progress.info[i] %></td>
+      <% if @ticket.progress.status[i] == "false" %>
+      <td>Action required!</td>
+      <%else%>
+      <td><%= @ticket.progress.status[i] %></td>
+      <%end%>
+      <% if  @ticket.progress.subusername[i] == "-" %>
+      <td><button class="btn btn-warning">Assing</button>
+      <%else%>
+      <td><button class="btn btn-success">Solved</button>
+      <%end%>
+    </tr>
+    <% i += 1%>
+    <% end %>
+  </tbody>
+</table>
+</div>
+ <div class="modal-footer">
+        <%= form_for(:comment, :url => {:controller => 'comments', :action => 'reply'}) do |f| %>
+
+        <strong><h4>Progress <%= sub_task_progress_bar(@ticket.progress.status)%>%</h4></strong>
+
+    </div>
+<div class="progress">
+  <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="<%= sub_task_progress_bar(@ticket.progress.status)%>" aria-valuemin="0" aria-valuemax="100" style="width: <%= sub_task_progress_bar(@ticket.progress.status)%>%"></div>
+</div>
+<br>
+  <div class="card bg-dark text-white" style="width: 50rem;">
+  <div class="card-body">
+    <h5 class="card-title">Employees Chat</h5>
+    <hr class="comments-hr">
+    <p class="card-text text-white">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+  </div>
+</div>
+  <br>
+ <div class="input-group mb-3" id="new_comment">
+        <%= f.text_field :comment, class: "form-control", placeholder: "Write a Comment", id: "comment_field" if @ticket.status%>
+        <%= f.number_field :id, value: @ticket.id, style: "display:none;" %>
+  <div class="input-group-append">  
+      <%= submit_comment_button if @ticket.status %>
+<% end %>  </div>
+</div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- End sub tasks full screen-->
+<script>
+
+
+var users = JSON.parse('<%= raw get_users_for_sub_tasks %>')
+  function getFile() {
+  document.getElementById("upfile").click();
+}
+
+function sub(obj) {
+  var file = obj.value;
+  var fileName = file.split("\\");
+  document.getElementById("yourBtn").innerHTML = "File Attached";
+  event.preventDefault();
+}
+
+$(".reassing").click(function() {
+    $("#assing_new_value").val($(this).attr('value'))
+     $("#reassing_action").trigger('click');
+});
+$("#Close_ticket, #Open_ticket").click(function() {
+    if (this.id == "Close_ticket") {
+     reason =  prompt("Why are you closing the ticket: ")
+     if (!/\S/.test(reason)) {
+      alert("Reason should be at least 8 words")
+      return false
+     }
+     document.getElementById("reason").value = reason;
+    }
+    else if (this.id == "Open_ticket") {
+     reason =  prompt("Why are you reopen the ticket: ")
+      if (!/\S/.test(reason)) {
+      alert("Reason should be at least 8 words")
+      return false
+     }
+     document.getElementById("reason").value = reason;
+    }
+});
+</script>
+
+
+</div>
+
+
+

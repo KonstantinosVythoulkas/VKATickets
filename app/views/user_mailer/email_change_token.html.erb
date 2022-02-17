@@ -1,0 +1,6 @@
+<h2>Email Update</h2>
+<p><%= @greeting %> </p>
+<p>Please confirm your new email <%= @new_email %> </p>
+<strong><i><a href="<%= confirm_email_user_url(@user.token.email_token) %>">Confirm Email</a></i></strong>
+<p>Kind rigards,</p>
+<p>Tickets Team</p>

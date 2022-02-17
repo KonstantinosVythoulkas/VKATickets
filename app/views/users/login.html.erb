@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <title>Login</title>
+  </head>
+  <body>
+    <center>
+    <div class="Login_Form">
+    <%= form_for(:user, id: 'forms', :url => {:controller => 'users', :action => 'verify'}, :html => { id: "forms" }) do |f| %> 
+        <br>
+        <br>
+        <div class="text-center mt-5">
+        <div class="login-form">
+        <h2 id="Log_in" class="text-center">Log in</h2>       
+        <div class="form-group">
+        <%= f.text_field :username, id: "username", class: "form-control", placeholder: "Username"%>
+        </div>
+        <div class="form-group">
+      <%= f.password_field :password, id: "login_password", class: "form-control", placeholder: "Password" %>
+        </div>
+
+        <div class="form-group">
+              <%= f.submit :Login, class: 'btn btn-primary btn-block', id: "login_button"%>
+        </div>
+        <% flash.each do |type, msg| %>
+          <div class="messages_erros">
+            <strong><li><center><%= msg %></center></li></strong><br>
+          </div>
+        <% end %>
+        <div class="clearfix">
+      </div>
+      <% end %>
+      <br>
+      <strong><a id="new_account" href="<%= new_user_path %>">Don't have an account? Sign up</a></strong><br>
+      <strong><a id="restore_password" onclick="restore_form()" href="#">Forgotten password?</a></strong>
+      <br>
+      </div>
+      <br>
+      </div>
+      </center>
+      <script>
+      function restore_form() {
+      document.getElementById("new_account").remove();
+      document.getElementById("login_password").remove();
+      document.getElementById("Log_in").innerHTML = "Password Restore"
+      document.getElementById("username").placeholder = "example@example.com"
+      document.getElementById("login_button").value = "Send"
+      document.getElementById('forms').action = "password_reset"
+      document.getElementById('username').name = "user[email]"
+      document.getElementById("restore_password").innerHTML = "Login"
+      event.preventDefault()
+      }
+      </script>
+  </body>
+</html>

@@ -1,0 +1,230 @@
+<div class="container" id="tickets_tasks_panel"> 
+ <table class="table  table-striped table-dark">
+ <br>
+<br>
+      <% flash.each do |type, msg| %>
+          <div class="messages_erros">
+          <script>
+          msg = '<%= msg %>'
+          </script>
+            <%= javascript_tag "alert(msg)" %>
+          </div>
+          <% end %>
+ <br>
+<br> <br>
+<br>
+<h3><span class="badge badge-secondary">Ticket Tile: <%= @ticket.title%></span></h3>
+<h3><span class="badge badge-secondary">Ticket ID: <%= @ticket.id%></span></h3>
+<h3><span class="badge badge-secondary">Ticket Author: <%= @ticket.user%></span></h3>
+<br>
+ <thead>
+    <tr>
+      <th scope="col">Department</th>
+      <th scope="col">User</th>
+      <th scope="col">Info</th>
+      <th scope="col">Status</th>
+      <th scope="col">Action</th>
+      <th scope="col">Remove</th>
+      <th scope="col">Won't Fix</th>
+    </tr>
+  </thead>
+  <tbody>
+          <%= form_for(:progress, html: { autocomplete: "off" },  :url => {:controller => 'progresss', :action => 'assing_task'}) do |f| %>
+  <% i = 0
+   while i < @ticket.progress.subusername.length %>
+    <tr>
+      <th scope="row"><%= @ticket.progress.subdepartment[i] %></th>
+        <div class="autocomplete" style="width:300px;">
+      <% if   @ticket.progress.subusername[i] == '-' %>
+      <td><%= f.text_field :subusername, class: "form-control", placeholder: "Type Employee Name", multiple: true, id: "username_field_tasks"+i.to_s, :readonly => @ticket.progress.status[i] %></td>
+      <%else%>
+      <td><%= f.text_field :subusername, class: "form-control", value:  @ticket.progress.subusername[i], multiple: true, id: "username_field_tasks"+i.to_s, :readonly => @ticket.progress.status[i] %></td>
+      <%end%>
+      </div>
+      <td> <textarea name="" id="" cols="25" rows="2" readonly><%= @ticket.progress.info[i] %></textarea></td>
+      <% if @ticket.progress.statusDesc[i] == "" %>
+      <td>Action required!</td>
+      <%else%>
+      <td><%= @ticket.progress.statusDesc[i] %></td>
+      <%end%>
+      <% if  @ticket.progress.subusername[i] == "-" %>
+      <td><%= f.button "Assing", class: "btn btn-warning", value: [i.to_i,@ticket.id, "Assing"].to_a %></td>
+      <%elsif  @ticket.progress.status[i] != true %>
+      <td><%= f.button "Solved", class: "btn btn-success", value: [i.to_i,@ticket.id,"Solved"].to_a %></td>
+      <% else %>
+      <td><%= f.button "Reopen", class: "btn btn-info", value: [i.to_i,@ticket.id,"Reopen"].to_a, id: "Reopen" %></td>
+          <%= f.submit "", :style => "display: none;", id: "Reopen_task" %>
+          <!--  Remove f.submit and make enter key "click on the button" othewise enter key will not submit the task changes! instead you will get an error! -->
+      <%end%>
+      <td><%= f.button "Delete", class: "btn btn-danger", value: [i.to_i,@ticket.id,"Delete"].to_a, id: "Delete" %></td>
+      <td><%= f.button "Won't Fix", class: "btn btn-info", value: [i.to_i,@ticket.id,"noAction"].to_a, id: "noAction" if !@ticket.progress.status[i] %></td>
+    </tr>
+    <% i += 1%>
+    <% end %>
+          <%= f.text_field :reason, :style => "display: none;", id: "reason" %>
+     <% end %>
+  </tbody>
+</table>
+        <% if !@ticket.progress.status.empty? %>
+          <strong><h4>Progress <%= sub_task_progress_bar(@ticket.progress.status)%>%</h4></strong>
+<div class="progress">
+  <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<%= sub_task_progress_bar(@ticket.progress.status)%>" aria-valuemin="0" aria-valuemax="100" style="width: <%= sub_task_progress_bar(@ticket.progress.status)%>%"></div>
+</div>
+<% end %>
+        <%= form_for(:comment, :url => {:controller => 'comments', :action => 'employee_reply'}) do |f| %>
+<br>
+
+  <div class="card bg-dark text-white" style="width: 50rem;">
+  <div class="card-body">
+    <h5 class="card-title">Employees Chat</h5>
+    <hr class="comments-hr">
+    <% i = 0%>
+    <% if @ticket.employeeschat.content != nil %>
+<div class="alert alert-secondary" role="alert" id="comments">
+<% while i < @ticket.employeeschat.content.length  %>
+  <strong><%= @ticket.employeeschat.username[i]%> (<%= @ticket.employeeschat.employeeGroup[i] %>): </strong><%= @ticket.employeeschat.content[i]%>
+  <span><em><%= @ticket.employeeschat.sendtime[i].strftime("%H:%M:%S") if @ticket.employeeschat.sendtime[i] !=  nil%></em></span>
+  <hr class="comments-hr">
+  <% i +=1 %>
+    <% end  %>
+</div>
+   <% end  %>
+  </div>
+  </div>
+  <br>
+ <div class="input-group mb-3" id="new_comment">
+ 
+        <%= f.text_field :content, class: "form-control", placeholder: "Write a Comment", id: "comment_field_emp" if @ticket.status%>
+        <%= f.number_field :id, value: @ticket.id, style: "display:none;" %>
+  <div class="input-group-append">  
+      <%= submit_comment_button if @ticket.status %>
+<% end %>  </div>
+</div>
+</div>
+
+
+</div>
+</div>
+
+<script>
+var users = JSON.parse('<%= raw get_users_for_sub_tasks %>')
+
+$("#Reopen, #noAction").click(function() {
+     reason =  prompt("Why are you closing the ticket: ")
+     if (!/\S/.test(reason)) {
+      alert("Reason should be at least 8 words")
+      return false
+     }
+     document.getElementById("reason").value = reason;
+ 
+    });
+
+    
+//AUTOCOMPLE FORM
+function autocomplete(inp, arr) {
+
+    /*the autocomplete function takes two arguments,
+    the text field element and an array of possible autocompleted values:*/
+    var currentFocus;
+    /*execute a function when someone writes in the text field:*/
+    inp.addEventListener("input", function(e) {
+        var a, b, i, val = this.value;
+        /*close any already open lists of autocompleted values*/
+        closeAllLists();
+        if (!val) { return false;}
+        currentFocus = -1;
+        /*create a DIV element that will contain the items (values):*/
+        a = document.createElement("DIV");
+        a.setAttribute("id", this.id + "autocomplete-list");
+        a.setAttribute("class", "autocomplete-items");
+        /*append the DIV element as a child of the autocomplete container:*/
+        this.parentNode.appendChild(a);
+        /*for each item in the array...*/
+        for (i = 0; i < arr.length; i++) {
+          /*check if the item starts with the same letters as the text field value:*/
+          if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+            /*create a DIV element for each matching element:*/
+            b = document.createElement("DIV");
+            /*make the matching letters bold:*/
+            b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+            b.innerHTML += arr[i].substr(val.length);
+            /*insert a input field that will hold the current array item's value:*/
+            b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+            /*execute a function when someone clicks on the item value (DIV element):*/
+            b.addEventListener("click", function(e) {
+                /*insert the value for the autocomplete text field:*/
+                inp.value = this.getElementsByTagName("input")[0].value;
+                /*close the list of autocompleted values,
+                (or any other open lists of autocompleted values:*/
+                closeAllLists();
+            });
+            a.appendChild(b);
+          }
+        }
+    });
+    /*execute a function presses a key on the keyboard:*/
+    inp.addEventListener("keydown", function(e) {
+        var x = document.getElementById(this.id + "autocomplete-list");
+        if (x) x = x.getElementsByTagName("div");
+        if (e.keyCode == 40) {
+          /*If the arrow DOWN key is pressed,
+          increase the currentFocus variable:*/
+          currentFocus++;
+          /*and and make the current item more visible:*/
+          addActive(x);
+        } else if (e.keyCode == 38) { //up
+          /*If the arrow UP key is pressed,
+          decrease the currentFocus variable:*/
+          currentFocus--;
+          /*and and make the current item more visible:*/
+          addActive(x);
+        } else if (e.keyCode == 13) {
+          /*If the ENTER key is pressed, prevent the form from being submitted,*/
+          e.preventDefault();
+          if (currentFocus > -1) {
+            /*and simulate a click on the "active" item:*/
+            if (x) x[currentFocus].click();
+          }
+        }
+    });
+    function addActive(x) {
+      /*a function to classify an item as "active":*/
+      if (!x) return false;
+      /*start by removing the "active" class on all items:*/
+      removeActive(x);
+      if (currentFocus >= x.length) currentFocus = 0;
+      if (currentFocus < 0) currentFocus = (x.length - 1);
+      /*add class "autocomplete-active":*/
+      x[currentFocus].classList.add("autocomplete-active");
+    }
+    function removeActive(x) {
+      /*a function to remove the "active" class from all autocomplete items:*/
+      for (var i = 0; i < x.length; i++) {
+        x[i].classList.remove("autocomplete-active");
+      }
+    }
+    function closeAllLists(elmnt) {
+      /*close all autocomplete lists in the document,
+      except the one passed as an argument:*/
+      var x = document.getElementsByClassName("autocomplete-items");
+      for (var i = 0; i < x.length; i++) {
+        if (elmnt != x[i] && elmnt != inp) {
+          x[i].parentNode.removeChild(x[i]);
+        }
+      }
+    }
+    /*execute a function when someone clicks in the document:*/
+    document.addEventListener("click", function (e) {
+        closeAllLists(e.target);
+    });
+  }
+  
+  /*initiate the autocomplete function on the "myInput" element, and pass along the users array as possible autocomplete values:*/
+  for (let i = 0; i < <%= @ticket.progress.subusername.length %>; i ++)
+  autocomplete(document.getElementById("username_field_tasks"+i), users);
+
+
+
+</script>
+
+           

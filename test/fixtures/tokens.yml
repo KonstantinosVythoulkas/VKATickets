@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  password_token: MyString
+  password_time: 2021-04-14 21:04:08
+  email_token: MyString
+  email_time: 2021-04-14 21:04:08
+  user: one
+
+two:
+  password_token: MyString
+  password_time: 2021-04-14 21:04:08
+  email_token: MyString
+  email_time: 2021-04-14 21:04:08
+  user: two

@@ -1,0 +1,76 @@
+
+<%= form_with(model: ticket) do |form| %>
+  <% if ticket.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(ticket.errors.count, "error") %> prohibited this ticket from being saved:</h2>
+
+      <ul>
+        <% ticket.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <br>
+   <br>
+    <br>
+<div class="container">
+  <div class="form-row">
+    <div class="form-group col-md-6">
+        <%= form.label :user, "Username" %>
+        <%= form.text_field :user, id: "ticket_user", class: "form-control", value: get_username_for_new_ticket, :readonly => true %>
+    </div>
+    <div class="form-group col-md-6">
+     <%= form.label :ticketDepartment, "Assing To"%>
+      <%= assing_list %>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <%= form.label :title%>
+      <%= form.text_field :title, class: "form-control", placeholder: "Title"%>
+    </div>
+    <div class="form-group col-md-6">
+  <div class="form-group">
+  <br>
+<div id="yourBtn" onclick="getFile()">Upload Images</div>
+  <div id="choose_button" style='height: 0px;width: 0px; overflow:hidden;'>
+  <%= form.file_field :images, :multiple => true, id: "upfile", :onchange => "sub(this)"%>
+  </div> 
+   </div>
+    </div>
+  </div>
+  <div class="ticket_content">
+<div class="container mt-4 mb-4" >
+  <div class="row justify-content-md-center">
+    <div class="col-md-12 col-lg-8" id="editor_size">
+      <div class="form-group">
+      <%= form.label "Describe your issue below"%>
+      <%= form.rich_text_area :content %>
+      </div>
+      <%= form.submit "Submit", class: "btn btn-primary"%>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+</div>
+</form>
+
+<script>
+$(document).on('change', '#assing_menu', function() {
+    $('.filter').trigger( "click" );
+    console.log($('#assing_menu').val())
+  });
+  function getFile() {
+  document.getElementById("upfile").click();
+}
+
+function sub(obj) {
+  var file = obj.value;
+  var fileName = file.split("\\");
+  document.getElementById("yourBtn").innerHTML = "File Attached";
+  event.preventDefault();
+}
+</script>
+<% end %>

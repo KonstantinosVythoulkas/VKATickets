@@ -1,0 +1,44 @@
+
+<div class="container-fluid">
+<br>
+<br>
+<br>
+<div class="text-center">
+<div class="alert alert-primary text-center" role="alert">
+    Security settings 
+</div>
+<br>
+  <strong><%= link_to "Change Password", edit_user_path(session[:user_id]), class: "btn btn-outline-primary", id: "options" %></strong>
+<br>
+<br>
+<strong><%= link_to "Change Email", users_email_update_path(:id => session[:user_id]), class: "btn btn-outline-primary", id: "options" %></strong>
+<br>
+<br>
+<div class="alert alert-danger text-center" role="alert">
+    Two factor authedication &nbsp;&nbsp;&nbsp;<i class="bi bi-question-diamond" title="You should have comfirm your email to use this action, After you enable this next time you will try to Log in a one time code will be send to your email" ></i>
+</div>
+
+<br>
+  <%= form_for(:user, :url => {:controller => 'users', :action => 'two_factor_switch'}) do |form| %>
+
+<div class="btn-group btn-group-toggle  " data-toggle="buttons" id="home">
+    <div class="custom-control custom-switch custom-switch-xl">
+    <%= check_box_tag "two_factor", "active", @user.settings.two_factor, class: "custom-control-input", id: "customSwitch1"%>
+    <%= label_tag 'customSwitch1', "", class: 'custom-control-label'%>
+    </div>
+  </div>
+<br>
+<br>
+<div class="alert alert-secondary text-center" role="alert">
+    General 
+</div>
+<strong><%= link_to "Add or update mobile number", users_update_mobile_path(:id => session[:user_id]), class: "btn btn-outline-primary", id: "options" %></strong>
+
+</div>
+</div>
+
+    <%= form.submit "#{!@user.settings.two_factor}", class: "edit_profile", id: "save_detailes", :style => "display: none;" %>
+
+<% end%>
+ <%= javascript_pack_tag "two_factor_controll" %>
+

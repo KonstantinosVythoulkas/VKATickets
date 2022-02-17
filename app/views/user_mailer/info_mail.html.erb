@@ -1,0 +1,6 @@
+<h2>Welcome to Tickets!</h2>
+<p><%= @greeting %> </p>
+<p>Please click the link bellow to confirm your account, or your account it's gonna be deleted after two hours!</p>
+<strong><i><a href="<%= confirm_email_user_url(@user.token.email_token) %>">Confirm Email</a></i></strong>
+<p>Kind rigards,</p>
+<p>Tickets Team</p>

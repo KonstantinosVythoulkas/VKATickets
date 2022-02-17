@@ -1,0 +1,56 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Tickets</h1>
+ <%= form_tag '/tickets', :method => :get do  %>
+ <%= search_input%><%= search_button%>
+ <div class="dropdown">
+<%= select_tag(:short_by, options_for_select([['New to Old', '01'], ['Unassinged  Tickets', '02'], ['Solved Tickets', '03'], ['In progress', '04'], ['Won\'t Fix Tickets', '05'], ['Assigned to me Tickets', '06'],['Search by ID', '07']], @filtrt_options,), class: "dropbtn")%>
+<%= button_tag "apply", class: "filter", :style => "display: none;"%>
+ <% end %>
+ <div class="dropdown">
+            <% if @user.group == "Admin"%>
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <%= if @department.nil? then  "Select Department" else @department end %> 
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <%= admin_dropdown_fil %>
+  </div>
+  <% end %>
+</div>
+ </div>
+ <div class="ticket_history_table">
+<table class="table table-dark">
+  <thead>
+    <tr>
+    <th>ID</th>
+      <th>User</th>
+      <th>Title</th>
+      <th>Assigned To</th>
+      <th>Status</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+  <%= no_tickets_warning_message(@tickets,@ticket_id)%>
+    <% @tickets.each do |ticket| %>
+      <tr>
+        <td><%= ticket.id %></td>
+        <td><%= ticket.user %></td>
+        <td><%= ticket.title %></td>
+        <% if  ticket.progress.username != nil %>
+        <td><%= ticket.progress.username %></td>
+        <%else%>
+        <td> - </td>
+        <% end %>
+        <td><%= ticket.statusinfo %></td>
+        <td><%= link_to 'Show', ticket, class: "btn btn-info" %></td>
+        <td><%= link_to 'Edit', edit_ticket_path(ticket), class: "btn btn-warning" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+ <%=javascript_pack_tag "short_by_apply"%>
+<br>
+
+</div>

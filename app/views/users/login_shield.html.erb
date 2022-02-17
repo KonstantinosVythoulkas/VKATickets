@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <title>Login Shield</title>
+  </head>
+  <body>
+    <center>
+    <%= form_for(:user, :url => {:controller => 'users', :action => 'login_verify'}) do |f| %>
+      <div class="container" id="shield">
+      <strong>Code:</strong><br>
+      <%= f.password_field :loginpass%>
+      <br>
+      <br>
+      <%= f.submit :Login, class: 'log_in_button' %>
+      <br>
+      <% end %>
+              <% flash.each do |type, msg| %>
+          <div class="messages_erros">
+            <strong><center><%= msg %></center><strong>
+          </div>
+        <% end %>
+      <br>
+      <p>Please Check your email inbox!</p>
+      <br>
+      <div id="resend">
+      <p>You didn't recive the code? Please check your spam folder <br> OR: <%= button_to "Resend",  tryagain_users_path %></p>
+      </div>
+      <br>
+      </div>
+      <%= javascript_pack_tag "two_factor_resend_button" %>
+      </center>
+  </body>
+</html>

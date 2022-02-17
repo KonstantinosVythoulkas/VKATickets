@@ -1,0 +1,269 @@
+// Place all the styles related to the Users controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: https://sass-lang.com/
+#new_accont,
+#restore_password{
+    position: relative;
+    left: 17px;
+    background: #352d2d;
+}
+#new_user_button{
+    position: relative;
+    left: 17px;
+}
+
+#login_user_button {
+    position: relative;
+    left: 17px;
+    background: #352d2d;
+
+}
+
+.signup {
+    position: relative;
+    top: 250px;
+}
+.login-form {
+    width: 340px;
+    margin: 50px auto;
+  	font-size: 15px;
+}
+.login-form form {
+    margin-bottom: 15px;
+    background: #f7f7f7;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    padding: 30px;
+}
+.login-form h2 {
+    margin: 0 0 15px;
+}
+.form-control, .btn {
+    min-height: 30px;
+    border-radius: 2px;
+}
+
+#Log_in {
+    color: wheat;
+}
+
+.login_form a:hover {
+    background: 352d2d;
+}
+
+.Login_Form li {
+    color: red;
+}
+
+#shield p{
+    color: wheat !important;
+}
+
+#shield {
+    position: relative;
+    top: 150px;
+}
+
+.email_warrning {
+    position: relative;
+    margin-left: 200%;
+}
+
+.email_warnings a {
+    color: wheat;
+}
+
+h4 {
+    color: wheat;
+}
+
+#edit_user {
+    position: relative;
+    top: 5em;
+    left: 15em;
+}
+.list-group-item, .card {
+    background-color: #352d2d !important;
+    border-style: solid;
+}
+
+#password,
+#password_comf {
+    width: 60%;
+}
+
+#old_password {
+    width: 60%;
+}
+
+.password_restore_form {
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+   // border-style: dashed;
+    width: 150%;
+    left: 400px;
+    top: 50px;
+}
+
+.password_rules {
+    width: 70%;
+}
+
+.edit_user {
+    position: relative;
+    right: 200px;
+    display: grid;
+    grid-template-columns: 250px 120px; 
+    grid-template-rows: 100px;
+    grid-column-gap: 5px;  }
+  
+  .item {
+      position: relative;
+    color: wheat;
+   // left: 250px;
+ 
+  }
+
+.rules {
+    position: relative;
+    left: 30em;
+    border-style: dashed;
+}
+
+
+#new_user_container {
+    position: relative;
+    bottom: 10em;
+
+}
+
+.new_user_form_rules {
+    position: relative;
+    top: 1em
+}
+
+body {
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+.login_link a:hover{
+    background-color: #352d2d;
+}
+
+
+#error_explanation {
+    background-color: black;
+}
+
+#assing_menu {
+    width: 40%;
+}
+
+.reassing:hover {
+    background-color: rgb(35, 226, 131);
+    cursor: pointer;
+}
+
+ul {
+    list-style: none;
+  }
+  
+  ul li::before {
+    content: "\2022";
+    color: rgb(154, 6, 199);
+    font-weight: bold;
+    display: inline-block; 
+    width: 1em;
+    margin-left: -1em;
+  }
+
+
+#edit_user_email{
+    position: relative;
+    top: 300px;
+    left: 650px;
+}
+
+.in_row_mobile_input{
+    display: inline-block;
+}
+
+.in_row_mobile_input label{
+    display: block;
+}
+
+#county_code_dropdown {
+    width: 50%;
+}
+
+
+#country_code_input, #mobile_input {
+    display: block;
+}
+
+
+.mobile_form {
+    display: flex; /* 2. display flex to the rescue */
+    flex-direction: row;
+}
+
+#country_code_input {
+    width: 45%;
+}
+
+#dropdownMenuButton {
+    position: relative;
+    bottom: 170px;
+    left: 470px;
+}
+
+.homepageRedirectLink {
+    color: wheat;
+}
+
+.homepageRedirectLink:hover {
+    color: wheat;
+    background-color: transparent; 
+    text-decoration: none;
+
+}
+
+.notifications_container .texting {
+    color: whitesmoke !important;
+}
+
+.hr_line {
+    width: 100%; 
+    height: 20px;
+    border-bottom: 1px solid  gold; 
+    text-align: center;
+    color: wheat;
+}
+
+.notifications_container a {
+    color: whitesmoke;
+}
+
+.notifications_container a:hover {
+    background-color: rgba(167, 157, 157, 0.548);
+    text-decoration: transparent;
+    color: whitesmoke;
+}
+
+.email_warrning a{
+    color: wheat;
+}
+
+.email_warrning a:hover {
+    background-color: transparent;
+    color: wheat;
+}
+
+.forgoten_password_restore_form {
+    width: 350px;
+    position: relative;
+    left: 400px;
+    top: 300px;
+    background-color: grey;
+}

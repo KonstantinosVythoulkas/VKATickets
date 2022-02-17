@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  username: MyString
+  employeeGroup: MyString
+  sendtime: 2021-09-09 09:00:21
+
+two:
+  username: MyString
+  employeeGroup: MyString
+  sendtime: 2021-09-09 09:00:21

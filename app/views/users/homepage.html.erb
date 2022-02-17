@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Tickets</title>
+
+
+</head>
+
+<body>
+<!-- Button trigger modal -->
+
+      <%if @user.group != "User" %>
+    <div class="content">
+    <br>
+     <br>
+      <br>
+            <h3><span class="badge badge-secondary">Tickets for <%= if @user.group != "Admin" then  @user.group elsif  @department.nil? then "All" else @department end %> department info</span></h3>
+            <div class="dropdown">
+            <% if @user.group == "Admin"%>
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <%= if @department.nil? then  "Select Department" else @department end %> 
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <%= admin_dropdown_fil %>
+  </div>
+  <% end %>
+</div>
+
+            <br>
+<div class="card-deck text-center ">
+  <div class="card bg-primary text-white">
+    <div class="card-block">
+      <h4 class="card-title"><%= link_to "Unopened tickets", tickets_path(short_by: "02"), class: "homepageRedirectLink"%></h4>
+      <p class="card-text text-white"><%= new_tickets_and_unopened(@user, @tickets,@department)%></p>
+    </div>
+  </div>
+  <div class="card bg-info text-white">
+    <div class="card-block">
+      <h4 class="card-title"><%= link_to "In Progress", tickets_path(short_by: "04"), class: "homepageRedirectLink"%></h4>
+      <p class="card-text text-white"><%= in_progress(@user, @tickets,@department)%></p>
+    </div>
+  </div>
+  <div class="card bg-success text-white">
+    <div class="card-block">
+      <h4 class="card-title"><%= link_to "Solved", tickets_path(short_by: "03"), class: "homepageRedirectLink"%></h4>
+      <p class="card-text text-white"><%= solved_tickets(@user, @tickets,@department)%></p>
+    </div>
+  </div>
+      <div class="card bg-secondary text-white">
+    <div class="card-block">
+      <h4 class="card-title"><%= link_to "Won't Fix", tickets_path(short_by: "05"), class: "homepageRedirectLink"%></h4>
+      <p class="card-text text-white"><%= wont_fix_tickets(@user, @tickets, @department)%></p>
+    </div>
+  </div>
+
+<% else %>
+    <div class="content">
+    <br>
+     <br>
+      <br>
+            <h3><span class="badge badge-secondary">Your tickets progress</span></h3>
+            <br>
+            
+<div class="card-deck text-center ">
+  <div class="card bg-primary text-white">
+    <div class="card-block">
+      <h4 class="card-title">You have opened</h4>
+      <p class="card-text text-white"><%= new_tickets_and_unopened(@user, @tickets, @department)%></p>
+    </div>
+  </div>
+  <div class="card bg-info text-white">
+    <div class="card-block">
+      <h4 class="card-title">In Progress</h4>
+      <p class="card-text text-white"><%= in_progress(@user, @tickets, @department)%></p>
+    </div>
+  </div>
+  <div class="card bg-success text-white">
+    <div class="card-block">
+      <h4 class="card-title">Have being Solved</h4>
+      <p class="card-text text-white"><%= solved_tickets(@user, @tickets, @department)%></p>
+    </div>
+  </div>
+    <div class="card bg-secondary text-white">
+    <div class="card-block">
+      <h4 class="card-title">Won't fix</h4>
+      <p class="card-text text-white"><%=wont_fix_tickets(@user, @tickets, @department)%></p>
+    </div>
+  </div>
+
+<% end %>
+
+            <div class="line"></div>
+<div class="home_page_table">
+<table class="table table-dark">
+<h3><span class="badge badge-secondary"><%= if @department.nil? then  "My Panel" else @department + " Panel" end %></span></h3>
+<br>
+  <thead>
+    <tr>
+      <th>User</th>
+      <th>Title</th>
+      <th>Assign To</th>
+      <th>Status</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @tickets.each  do  |ticket| %>
+      <tr>
+        <td><%= ticket.user %></td>
+        <td><%= ticket.title %></td>
+        <% if  ticket.progress.username != nil %>
+        <td><%= ticket.progress.username %></td>
+        <%else%>
+        <td> - </td>
+        <% end %>
+        <td><%= ticket.statusinfo %></td>
+        <td><%= link_to 'Show', ticket, class: "btn btn-info" %></td>
+        <td><%= link_to 'Edit', edit_ticket_path(ticket), class: "btn btn-warning" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+</div>
+
+</body>
+
+</html>

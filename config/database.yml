@@ -1,0 +1,19 @@
+development:
+  host: 192.168.1.18
+  port: 5432
+  adapter: postgresql
+  encoding: unicode
+  database: tickets_db
+  pool: 5
+  username: tickets
+  password: '748952aA'
+
+  test:
+  host: 192.168.1.18
+  port: 5432
+  adapter: postgresql
+  encoding: unicode
+  database: tickets_db
+  pool: 5
+  username: tickets
+  password: '748952aA'
